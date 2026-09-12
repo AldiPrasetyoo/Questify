@@ -93,7 +93,8 @@
                         <span
                             class="text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors duration-300"
                             :class="modeUjian === 'pretest' ? 'bg-cyan-50 text-[#00c2cb]' : 'bg-emerald-50 text-emerald-600'">
-                            <span x-text="modeUjian === 'pretest' ? 'Rata-rata Pre' : 'Rata-rata Post'"></span>
+                            <span
+                                x-text="modeUjian === 'pretest' ? 'Rata-rata Pre-Test' : 'Rata-rata Post-Test'"></span>
                         </span>
                     </div>
 

@@ -68,8 +68,7 @@
         <div class="flex gap-1 mt-2 bg-slate-50 p-1 rounded-xl border border-slate-100">
             @foreach($kontens as $i => $k)
             <div
-                class="h-1 flex-1 rounded-full transition-all duration-500
-                {{ $progresKonten->get($k->id)?->selesai ? 'bg-emerald-500' : ($i === $indexKontenAktif ? 'bg-[#ff8a00] animate-pulse' : 'bg-slate-200') }}">
+                class="h-1 flex-1 rounded-full transition-all duration-500 {{ $progresKonten->get($k->id)?->selesai ? 'bg-emerald-500' : ($i === $indexKontenAktif ? 'bg-[#ff8a00] animate-pulse' : 'bg-slate-200') }}">
             </div>
             @endforeach
         </div>
@@ -79,55 +78,96 @@
 
     @if($kontenAktif)
     {{-- KOTAK KONTEN UTAMA --}}
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sm:p-6 space-y-4">
-        @switch($kontenAktif->tipe)
-        @case('teks_web')
-        <div class="prose max-w-none text-slate-700 font-semibold text-xs sm:text-sm leading-relaxed">
-            {!! $kontenAktif->konten_html !!}
-        </div>
-        <div class="pt-2 flex justify-end border-t border-slate-100">
-            <button wire:click="kontenSelesai({{ $kontenAktif->id }})"
-                class="bg-[#ff8a00] hover:bg-orange-600 text-white font-black text-xs py-2.5 px-6 rounded-xl shadow-md shadow-orange-500/20 transition-all flex items-center gap-2">
-                <span>Lanjut Eksplorasi</span> &rarr;
-            </button>
-        </div>
-        @break
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sm:p-6 relative flex flex-col min-h-[300px]">
 
-        @case('aset_ppt')
-        <div class="space-y-3 flex flex-col items-center">
-            <div
-                class="rounded-xl overflow-hidden border border-slate-100 bg-slate-50 max-h-[300px] flex justify-center w-full">
-                <img src="{{ Storage::url($kontenAktif->path_gambar) }}" alt="{{ $kontenAktif->judul }}"
-                    class="max-h-[280px] object-contain rounded-xl">
+        <div class="flex-1 space-y-4">
+            @switch($kontenAktif->tipe)
+
+            @case('teks_web')
+            <div class="prose max-w-none text-slate-700 font-semibold text-xs sm:text-sm leading-relaxed">
+                {!! $kontenAktif->konten_html !!}
             </div>
-            <div class="flex justify-end w-full pt-2">
+
+            <div class="pt-4 mt-6 flex items-center w-full border-t border-slate-100">
+                @if($indexKontenAktif > 0)
+                <button wire:click="kontenSebelumnya"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-black text-xs py-2.5 px-5 rounded-xl transition-all flex items-center gap-2">
+                    Sebelumnya
+                </button>
+                @endif
                 <button wire:click="kontenSelesai({{ $kontenAktif->id }})"
-                    class="bg-[#ff8a00] hover:bg-orange-600 text-white font-black text-xs py-2.5 px-6 rounded-xl shadow-md shadow-orange-500/20 transition-all">
-                    Selesai Membaca &rarr;
+                    class="ml-auto bg-[#ff8a00] hover:bg-orange-600 text-white font-black text-xs py-2.5 px-6 rounded-xl shadow-md shadow-orange-500/20 transition-all flex items-center gap-2">
+                    <span>Lanjut Eksplorasi</span>
                 </button>
             </div>
+            @break
+
+            @case('aset_ppt')
+            <div class="space-y-3 flex flex-col items-center">
+                <div
+                    class="rounded-xl overflow-hidden border border-slate-100 bg-slate-50 max-h-[300px] flex justify-center w-full">
+                    <img src="{{ Storage::url($kontenAktif->path_gambar) }}" alt="{{ $kontenAktif->judul }}"
+                        class="max-h-[280px] object-contain rounded-xl">
+                </div>
+            </div>
+
+            <div class="pt-4 mt-6 flex items-center w-full border-t border-slate-100">
+                @if($indexKontenAktif > 0)
+                <button wire:click="kontenSebelumnya"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-black text-xs py-2.5 px-5 rounded-xl transition-all flex items-center gap-2">
+                    Sebelumnya
+                </button>
+                @endif
+                <button wire:click="kontenSelesai({{ $kontenAktif->id }})"
+                    class="ml-auto bg-[#ff8a00] hover:bg-orange-600 text-white font-black text-xs py-2.5 px-6 rounded-xl shadow-md shadow-orange-500/20 transition-all">
+                    Selesai Membaca
+                </button>
+            </div>
+            @break
+
+            @case('koding')
+            <div class="pb-12"> {{-- Jarak agar tombol Selesai di child sejajar dengan tombol absolut Sebelumnya --}}
+                @livewire(
+                'student.koding.' . \Illuminate\Support\Str::of($kontenAktif->komponen_koding)->kebab(),
+                ['kontenMisiId' => $kontenAktif->id, 'konfigurasi' => $kontenAktif->konfigurasi_koding ?? []],
+                key('koding-'.$kontenAktif->id)
+                )
+            </div>
+
+            @if($indexKontenAktif > 0)
+            <div class="absolute bottom-5 sm:bottom-6 left-5 sm:left-6">
+                <button wire:click="kontenSebelumnya"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-black text-xs py-2.5 px-5 rounded-xl transition-all flex items-center gap-2">
+                    Sebelumnya
+                </button>
+            </div>
+            @endif
+            @break
+
+            @case('kuis')
+            @livewire('student.kuis-mini', ['kontenMisiId' => $kontenAktif->id], key('kuis-'.$kontenAktif->id))
+            @break
+
+            @case('refleksi')
+            <div class="pb-12">
+                @livewire('student.refleksi-terbuka', [
+                'kontenMisiId' => $kontenAktif->id,
+                'pertanyaan' => $kontenAktif->pertanyaan_refleksi
+                ], key('refleksi-'.$kontenAktif->id))
+            </div>
+
+            @if($indexKontenAktif > 0)
+            <div class="absolute bottom-5 sm:bottom-6 left-5 sm:left-6">
+                <button wire:click="kontenSebelumnya"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-black text-xs py-2.5 px-5 rounded-xl transition-all flex items-center gap-2">
+                    Sebelumnya
+                </button>
+            </div>
+            @endif
+            @break
+
+            @endswitch
         </div>
-        @break
-
-        @case('koding')
-        @livewire(
-        'student.koding.' . \Illuminate\Support\Str::of($kontenAktif->komponen_koding)->kebab(),
-        ['kontenMisiId' => $kontenAktif->id, 'konfigurasi' => $kontenAktif->konfigurasi_koding ?? []],
-        key('koding-'.$kontenAktif->id)
-        )
-        @break
-
-        @case('kuis')
-        @livewire('student.kuis-mini', ['kontenMisiId' => $kontenAktif->id], key('kuis-'.$kontenAktif->id))
-        @break
-
-        @case('refleksi')
-        @livewire('student.refleksi-terbuka', [
-        'kontenMisiId' => $kontenAktif->id,
-        'pertanyaan' => $kontenAktif->pertanyaan_refleksi
-        ], key('refleksi-'.$kontenAktif->id))
-        @break
-        @endswitch
     </div>
     @else
     {{-- MODAL SELESAI MISI --}}
@@ -135,18 +175,14 @@
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
         <div
             class="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl p-6 sm:p-8 max-w-md w-full text-center relative">
-            {{-- IKON TROPHY --}}
             <div
                 class="w-16 h-16 bg-gradient-to-tr from-amber-400 to-orange-400 text-white rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-lg shadow-orange-500/30 animate-bounce mb-3">
                 🏆
             </div>
 
             <h2 class="text-xl font-black text-slate-800">Misi Berhasil Dituntaskan!</h2>
-            <p class="text-xs font-semibold text-slate-400 mt-1 mb-4">
-                Progres belajarmu telah otomatis tersimpan.
-            </p>
+            <p class="text-xs font-semibold text-slate-400 mt-1 mb-4">Progres belajarmu telah otomatis tersimpan.</p>
 
-            {{-- INFO POIN YANG DIDAPAT --}}
             <div
                 class="bg-amber-50/80 border border-amber-200/60 rounded-2xl p-3.5 mb-5 flex items-center justify-center gap-3">
                 <span class="text-2xl">{{ $poinDidapat > 0 ? '✨' : '🔁' }}</span>
@@ -188,7 +224,6 @@
         x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
         class="fixed bottom-6 right-6 z-[60] max-w-sm w-full p-4 bg-white/95 backdrop-blur-md rounded-2xl border-2 border-amber-300 shadow-2xl flex items-center gap-4">
 
-        {{-- Ikon/Gambar Lencana --}}
         <div
             class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 to-yellow-300 flex items-center justify-center text-2xl shadow-md shrink-0">
             @if(!empty($lencanaBaru->ikon))
@@ -204,18 +239,15 @@
         <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
                 <span
-                    class="text-[9px] font-black uppercase tracking-wider text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
-                    Lencana Baru!
-                </span>
+                    class="text-[9px] font-black uppercase tracking-wider text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">Lencana
+                    Baru!</span>
                 <button @click="tampil = false"
                     class="text-slate-400 hover:text-slate-600 text-sm font-bold">&times;</button>
             </div>
-            <h4 class="text-sm font-black text-slate-800 truncate mt-1">
-                {{ $lencanaBaru->nama ?? 'Pencapaian Baru' }}
+            <h4 class="text-sm font-black text-slate-800 truncate mt-1">{{ $lencanaBaru->nama ?? 'Pencapaian Baru' }}
             </h4>
             <p class="text-[11px] font-semibold text-slate-500 line-clamp-1">
-                {{ $lencanaBaru->deskripsi ?? 'Selamat atas pencapaian barumu!' }}
-            </p>
+                {{ $lencanaBaru->deskripsi ?? 'Selamat atas pencapaian barumu!' }}</p>
         </div>
     </div>
     @endif

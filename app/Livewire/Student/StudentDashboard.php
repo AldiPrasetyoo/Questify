@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\ProgresMisi;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use App\Models\AnggotaKelompok;
 
 class StudentDashboard extends Component
 {
@@ -103,6 +104,10 @@ class StudentDashboard extends Component
         $selisihAtas = $siswaDiAtas ? max(0, (int) $siswaDiAtas->total_poin - $skorSekarang) : 0;
         $selisihBawah = $siswaDiBawah ? max(0, $skorSekarang - (int) $siswaDiBawah->total_poin) : 0;
 
+        $kelompokSaya = AnggotaKelompok::where('user_id', auth()->id())
+            ->with('kelompok')
+            ->first()?->kelompok;
+
         return view('livewire.student.student-dashboard', [
             'user'           => $user,
             'pretest'        => $pretest,
@@ -119,6 +124,7 @@ class StudentDashboard extends Component
             'siswaDiBawah'   => $siswaDiBawah,
             'selisihAtas'    => $selisihAtas,
             'selisihBawah'   => $selisihBawah,
+            'kelompokSaya'   => $kelompokSaya, 
         ])->layout('layouts.questify', ['title' => 'Dashboard Siswa']);
     }
 }

@@ -39,6 +39,21 @@ class MisiViewer extends Component
         }
     }
 
+    // Fungsi Navigasi Mundur
+    public function kontenSebelumnya()
+    {
+        $kontenSaatIni = $this->misi->kontens[$this->indexKontenAktif] ?? null;
+
+        // Keamanan Backend: Blokir aksi mundur jika sedang berada di mode kuis
+        if ($kontenSaatIni && $kontenSaatIni->tipe === 'kuis') {
+            return;
+        }
+
+        if ($this->indexKontenAktif > 0) {
+            $this->indexKontenAktif--;
+        }
+    }
+
     #[On('kontenSelesai')]
     public function kontenSelesai(int $kontenMisiId, array $data = [], int $poin = 0)
     {

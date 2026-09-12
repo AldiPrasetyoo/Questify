@@ -7,9 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class misi extends Model
 {
     protected $fillable = [
-        'pertemuan_id', 'fase', 'urutan', 'judul', 'deskripsi',
-        'estimasi_menit', 'poin_maksimal', 'misi_prasyarat_id',
-        'wajib_kerja_kelompok', 'aktif',
+        'pertemuan_id',
+        'fase',
+        'urutan',
+        'judul',
+        'deskripsi',
+        'estimasi_menit',
+        'poin_maksimal',
+        'misi_prasyarat_id',
+        'wajib_kerja_kelompok',
+        'aktif',
     ];
 
     protected function casts(): array
@@ -30,6 +37,12 @@ class misi extends Model
     public function kontens()
     {
         return $this->hasMany(KontenMisi::class)->orderBy('urutan');
+    }
+
+    // Tambahkan relasi progresMisis agar bisa dipanggil oleh fungsi with() di controller/Livewire
+    public function progresMisis()
+    {
+        return $this->hasMany(ProgresMisi::class);
     }
 
     public function progresUntuk(User $user)

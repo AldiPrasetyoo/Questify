@@ -9,6 +9,30 @@ use Illuminate\Http\Request;
 
 class downloadData extends Controller
 {
+    public function downloadHasilUji()
+    {
+        return response()->streamDownload(function () {
+            $hasil = \App\Models\HasilUjiPublik::latest()->get();
+            $file = fopen('php://output', 'w');
+
+            // Header Kolom CSV
+            fputcsv($file, ['Waktu Pengerjaan', 'Nama', 'Kelas/Instansi', 'Skor', 'Jumlah Benar', 'Total Soal']);
+
+            // Isi Data
+            foreach ($hasil as $row) {
+                fputcsv($file, [
+                    $row->created_at->format('Y-m-d H:i:s'),
+                    $row->nama,
+                    $row->kelas,
+                    $row->skor,
+                    $row->jumlah_benar,
+                    $row->total_soal
+                ]);
+            }
+            fclose($file);
+        }, 'Rekap_Hasil_Uji_Publik_' . date('Ymd_His') . '.csv');
+    }
+
     public function downloadExcel()
     {
         $filename = "rekap_validitas_nilai_siswa_" . date('Y-m-d') . ".xls";

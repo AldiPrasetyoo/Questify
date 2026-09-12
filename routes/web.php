@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\UjiSoal;
 
 // ======================================================
 // TEACHER COMPONENTS
@@ -36,6 +37,8 @@ use App\Livewire\Teacher\ManageStudents;
 // ======================================================
 
 Route::view('/', 'welcome')->name('home');
+
+Route::get('/uji-soal', UjiSoal::class)->name('public.uji-soal');
 
 
 // ======================================================

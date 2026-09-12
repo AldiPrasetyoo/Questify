@@ -54,13 +54,7 @@
 <script>
 function ujiTabelKebenaran() {
     return {
-        kode: `if (jam <= 700) {
-    cout << "Hadir";
-} else if (jam <= 730) {
-    cout << "Terlambat";
-} else {
-    cout << "Alpa";
-}`,
+        kode: ``,
         dataUji: [
             [648, 'Hadir', ''],
             [700, 'Hadir', 'Jam batas'],
@@ -87,7 +81,7 @@ function ujiTabelKebenaran() {
                     if (typeof window.bungkusKode !== 'function' || typeof window.jalankanKodeCpp !== 'function') {
                         throw new Error(
                             "Sistem gagal memuat eksekutor C++ (bungkusKode / jalankanKodeCpp tidak ditemukan)."
-                            );
+                        );
                     }
 
                     const program = window.bungkusKode(this.kode, {

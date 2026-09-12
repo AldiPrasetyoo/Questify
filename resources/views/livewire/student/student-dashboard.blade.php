@@ -52,6 +52,17 @@
                             </div>
                         </div>
 
+                        {{-- Kelompok --}}
+                        <div class="rounded-2xl bg-white/15 px-5 py-3 backdrop-blur">
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-white/60">
+                                Kelompok
+                            </div>
+
+                            <div class="mt-1 text-xl font-black">
+                                {{ $kelompokSaya->nama_kelompok ?? '-' }}
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -237,10 +248,6 @@
                             📚
                         </div>
 
-                        <span class="text-slate-300 transition group-hover:translate-x-1">
-                            →
-                        </span>
-
                     </div>
 
                     <h3 class="mt-5 font-black text-slate-800">
@@ -290,10 +297,6 @@
                         <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-50 text-xl">
                             📊
                         </div>
-
-                        <span class="text-slate-300 transition group-hover:translate-x-1">
-                            →
-                        </span>
 
                     </div>
 
@@ -569,10 +572,6 @@
 
                             <span>Mulai Pre-Test</span>
 
-                            <span class="text-lg group-hover:translate-x-1 transition-transform">
-                                →
-                            </span>
-
                         </a>
 
                         <p class="text-center text-[9px] font-bold text-gray-400 mt-3">
@@ -799,7 +798,6 @@
                             <a href="{{ route('pertemuan.show', $p) }}"
                                 class="group/btn flex items-center justify-between w-full bg-gray-50 hover:bg-[#00c2cb] text-gray-700 hover:text-white px-5 py-3.5 rounded-2xl font-black text-xs transition-all shadow-sm">
                                 <span>Masuk Pertemuan</span>
-                                <span class="text-lg group-hover/btn:translate-x-1 transition-transform">→</span>
                             </a>
                             @else
                             <button type="button" disabled

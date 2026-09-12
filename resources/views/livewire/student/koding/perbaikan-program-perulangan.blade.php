@@ -75,22 +75,7 @@ function ujiTigaPerulangan() {
     15
     16 for (int k = 0; k <= jumlah; k++) { 17 cout << "Data ke-" << k << " tercatat" << endl; 18 } 19 20 int m=1; 21
         do { 22 cout << "Rekap baris " << m << endl; 23 m++; 24 } while (m <= jumlah);`,
-        kodePerbaikan: `int i=1; 
-while (i <= jumlah) { 
-    cout << "Jam siswa ke-" << i << ": "; 
-    cin >> jam;
-    i++;
-}
-
-for (int k = 1; k <= jumlah; k++) { 
-    cout << "Data ke-" << k << " tercatat" << endl; 
-} 
-
-int m = 1; 
-while (m <= jumlah) { 
-    cout << "Rekap baris " << m << endl; 
-    m++; 
-}`,
+        kodePerbaikan: ``,
         dataUji: [{
                 jumlah: 3,
                 catatan: ''

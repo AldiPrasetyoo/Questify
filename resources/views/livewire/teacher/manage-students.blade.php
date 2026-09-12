@@ -28,6 +28,74 @@
         </div>
     </div>
 
+    {{-- PANEL GENERATOR KELOMPOK OTOMATIS BERDASARKAN PRE-TEST --}}
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 sm:p-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+                <span
+                    class="text-[10px] font-black text-[#00c2cb] tracking-widest uppercase bg-teal-50 px-3 py-1 rounded-full">
+                    Fitur Kolaborasi
+                </span>
+                <h2 class="text-xl font-black text-slate-800 mt-2">Pembagian Kelompok Belajar Otomatis</h2>
+                <p class="text-xs font-semibold text-slate-400 mt-1">Sistem akan meratakan siswa mahir, sedang, dan
+                    kurang berdasarkan nilai Pre-Test.</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="w-32">
+                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-wider block mb-1">Jml
+                        Kelompok</label>
+                    <input type="number" wire:model="jumlahKelompok" min="2" max="10"
+                        class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-700 text-center">
+                </div>
+                <button wire:click="generateKelompokOtomatis"
+                    class="px-6 py-3.5 mt-4 bg-[#ff8a00] hover:bg-orange-600 text-white font-black rounded-xl text-xs shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2 shrink-0">
+                    Generate Kelompok ⚡
+                </button>
+            </div>
+        </div>
+
+        @if (session()->has('success'))
+        <div
+            class="mb-4 bg-emerald-50 border border-emerald-100 text-emerald-600 px-4 py-3 rounded-xl text-xs font-black">
+            ✔ {{ session('success') }}
+        </div>
+        @endif
+        @if (session()->has('error'))
+        <div class="mb-4 bg-rose-50 border border-rose-100 text-rose-600 px-4 py-3 rounded-xl text-xs font-black">
+            ⚠ {{ session('error') }}
+        </div>
+        @endif
+
+        {{-- TAMPILAN HASIL KELOMPOK YANG TERBENTUK --}}
+        @if(count($daftarKelompok ?? []) > 0)
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-100 mt-4">
+            @foreach($daftarKelompok as $kelompok)
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/60">
+                <h3 class="font-black text-slate-800 text-sm mb-3 flex items-center justify-between">
+                    <span>{{ $kelompok->nama_kelompok }}</span>
+                    <span class="text-[10px] bg-teal-100 text-teal-800 px-2 py-0.5 rounded-md font-bold">
+                        {{ count($kelompok->anggotas) }} Anggota
+                    </span>
+                </h3>
+                <ul class="space-y-2">
+                    @foreach($kelompok->anggotas as $anggota)
+                    <li
+                        class="text-xs font-semibold text-slate-600 bg-white p-2.5 rounded-xl border border-slate-100 flex items-center gap-2">
+                        <span
+                            class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[10px]">
+                            👤
+                        </span>
+                        <span class="truncate">{{ $anggota->user->name ?? 'Siswa' }}</span>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endforeach
+        </div>
+        @endif
+    </div>
+
     {{-- Filter Pencarian --}}
     <div
         class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">

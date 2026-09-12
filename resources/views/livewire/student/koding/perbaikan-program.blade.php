@@ -72,13 +72,7 @@ function perbaikanProgram() {
 15      else
 16          cout << "Alpa";
 17          cout << " - harap menghadap guru piket";`,
-        kodePerbaikan: `if (jam <= 700) {
-    cout << "Hadir";
-} else if (jam <= 730) {
-    cout << "Terlambat";
-} else {
-    cout << "Alpa";
-}`,
+        kodePerbaikan: ``,
         dataUji: [
             [648, 'Hadir'],
             [715, 'Terlambat'],

@@ -59,135 +59,109 @@
 </div>
 
 <script>
-    function simulasiKehadiran() {
-        return {
-            kode: `int hadir = 0, terlambat = 0, alpa = 0;
-int jumlah;
-cin >> jumlah;
+function simulasiKehadiran() {
+    return {
+        kode: ``,
+        dataUji: [{
+                jumlah: 3,
+                jam: [648, 715, 800],
+                hK: 1,
+                tK: 1,
+                aK: 1,
+                persenTeks: '33',
+                catatan: 'Menguji pembagian bilangan bulat'
+            },
+            {
+                jumlah: 4,
+                jam: [700, 700, 701, 731],
+                hK: 2,
+                tK: 1,
+                aK: 1,
+                persenTeks: '50',
+                catatan: 'Menguji jam batas'
+            },
+            {
+                jumlah: 2,
+                jam: [650, 655],
+                hK: 2,
+                tK: 0,
+                aK: 0,
+                persenTeks: '100',
+                catatan: ''
+            },
+            {
+                jumlah: 0,
+                jam: [],
+                hK: 0,
+                tK: 0,
+                aK: 0,
+                persenTeks: 'Tidak ada data',
+                catatan: 'Menguji pembagian dengan nol'
+            },
+        ],
+        hasilUji: [],
+        errorTerakhir: null,
+        sudahDijalankan: false,
+        sedangJalan: false,
 
-for (int i = 1; i <= jumlah; i++) {
-    int jam;
-    cout << "Jam kedatangan siswa ke-" << i << ": ";
-    cin >> jam;
+        async jalankanUji() {
+            this.sedangJalan = true;
+            this.hasilUji = [];
+            this.errorTerakhir = null;
 
-    if (jam <= 700) {
-        hadir++;
-    } else if (jam <= 730) {
-        terlambat++;
-    } else {
-        alpa++;
-    }
-}
+            try {
+                await new Promise(r => setTimeout(r, 10));
 
-cout << "Hadir: " << hadir << endl;
-cout << "Terlambat: " << terlambat << endl;
-cout << "Alpa: " << alpa << endl;
-
-if (jumlah > 0) {
-    cout << "Persentase: " << hadir * 100 / jumlah << "%";
-} else {
-    cout << "Tidak ada data untuk dihitung";
-}`,
-            dataUji: [{
-                    jumlah: 3,
-                    jam: [648, 715, 800],
-                    hK: 1,
-                    tK: 1,
-                    aK: 1,
-                    persenTeks: '33',
-                    catatan: 'Menguji pembagian bilangan bulat'
-                },
-                {
-                    jumlah: 4,
-                    jam: [700, 700, 701, 731],
-                    hK: 2,
-                    tK: 1,
-                    aK: 1,
-                    persenTeks: '50',
-                    catatan: 'Menguji jam batas'
-                },
-                {
-                    jumlah: 2,
-                    jam: [650, 655],
-                    hK: 2,
-                    tK: 0,
-                    aK: 0,
-                    persenTeks: '100',
-                    catatan: ''
-                },
-                {
-                    jumlah: 0,
-                    jam: [],
-                    hK: 0,
-                    tK: 0,
-                    aK: 0,
-                    persenTeks: 'Tidak ada data',
-                    catatan: 'Menguji pembagian dengan nol'
-                },
-            ],
-            hasilUji: [],
-            errorTerakhir: null,
-            sudahDijalankan: false,
-            sedangJalan: false,
-
-            async jalankanUji() {
-                this.sedangJalan = true;
-                this.hasilUji = [];
-                this.errorTerakhir = null;
-
-                try {
-                    await new Promise(r => setTimeout(r, 10));
-
-                    for (const d of this.dataUji) {
-                        if (typeof window.jalankanKodeCpp !== 'function') {
-                            throw new Error("Sistem gagal memuat eksekutor C++ (jalankanKodeCpp tidak ditemukan).");
-                        }
-
-                        const program =
-                            `#include <iostream>\nusing namespace std;\nint main() {\n${this.kode}\n    return 0;\n}`;
-                        const masukan = [d.jumlah, ...d.jam];
-                        const hasil = window.jalankanKodeCpp(program, masukan);
-
-                        if (hasil.error) {
-                            this.errorTerakhir = hasil.error;
-                            this.hasilUji = [];
-                            this.sudahDijalankan = true;
-                            return;
-                        }
-
-                        const rekapLolos = hasil.keluaran.includes(`Hadir: ${d.hK}`) && hasil.keluaran.includes(
-                            `Terlambat: ${d.tK}`) && hasil.keluaran.includes(`Alpa: ${d.aK}`);
-                        const persenLolos = hasil.keluaran.includes(d.persenTeks);
-
-                        this.hasilUji.push({
-                            jumlah: d.jumlah,
-                            catatan: d.catatan,
-                            keluaran: hasil.keluaran,
-                            hK: d.hK,
-                            tK: d.tK,
-                            aK: d.aK,
-                            rekapLolos,
-                            persenLolos,
-                            batasWaktu: hasil.batasWaktuTerlampaui,
-                            lolos: rekapLolos && persenLolos && !hasil.batasWaktuTerlampaui,
-                        });
+                for (const d of this.dataUji) {
+                    if (typeof window.jalankanKodeCpp !== 'function') {
+                        throw new Error("Sistem gagal memuat eksekutor C++ (jalankanKodeCpp tidak ditemukan).");
                     }
-                    this.sudahDijalankan = true;
-                } catch (err) {
-                    this.errorTerakhir = err.message || err;
-                } finally {
-                    this.sedangJalan = false;
+
+                    const program =
+                        `#include <iostream>\nusing namespace std;\nint main() {\n${this.kode}\n    return 0;\n}`;
+                    const masukan = [d.jumlah, ...d.jam];
+                    const hasil = window.jalankanKodeCpp(program, masukan);
+
+                    if (hasil.error) {
+                        this.errorTerakhir = hasil.error;
+                        this.hasilUji = [];
+                        this.sudahDijalankan = true;
+                        return;
+                    }
+
+                    const rekapLolos = hasil.keluaran.includes(`Hadir: ${d.hK}`) && hasil.keluaran.includes(
+                        `Terlambat: ${d.tK}`) && hasil.keluaran.includes(`Alpa: ${d.aK}`);
+                    const persenLolos = hasil.keluaran.includes(d.persenTeks);
+
+                    this.hasilUji.push({
+                        jumlah: d.jumlah,
+                        catatan: d.catatan,
+                        keluaran: hasil.keluaran,
+                        hK: d.hK,
+                        tK: d.tK,
+                        aK: d.aK,
+                        rekapLolos,
+                        persenLolos,
+                        batasWaktu: hasil.batasWaktuTerlampaui,
+                        lolos: rekapLolos && persenLolos && !hasil.batasWaktuTerlampaui,
+                    });
                 }
-            },
-
-            get jumlahLolos() {
-                return this.hasilUji.filter(h => h.lolos).length;
-            },
-
-            kirim() {
-                const poin = Math.min(this.jumlahLolos * 5, 20);
-                this.$wire.terimaHasil(this.jumlahLolos, this.kode, poin);
+                this.sudahDijalankan = true;
+            } catch (err) {
+                this.errorTerakhir = err.message || err;
+            } finally {
+                this.sedangJalan = false;
             }
-        };
-    }
+        },
+
+        get jumlahLolos() {
+            return this.hasilUji.filter(h => h.lolos).length;
+        },
+
+        kirim() {
+            const poin = Math.min(this.jumlahLolos * 5, 20);
+            this.$wire.terimaHasil(this.jumlahLolos, this.kode, poin);
+        }
+    };
+}
 </script>

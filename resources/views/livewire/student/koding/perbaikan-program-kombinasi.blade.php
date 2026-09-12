@@ -71,23 +71,7 @@ function ujiPerbaikanProgram() {
 21
 22          cout << "Persentase: " << hadir / jumlah * 100 << "%" << endl;
 23      }`,
-        kodePerbaikan: `int hadir = 0, terlambat = 0, alpa = 0;
-
-for (int i = 1; i <= jumlah; i++) {
-    cout << "Jam siswa ke-" << i << ": ";
-    cin >> jam;
-
-    if (jam <= 700) {
-        hadir++;
-    } else if (jam <= 730) {
-        terlambat++;
-    } else {
-        alpa++;
-        cout << "Siswa alpa" << endl;
-    }
-}
-
-cout << "Persentase: " << hadir * 100 / jumlah << "%" << endl;`,
+        kodePerbaikan: ``,
         jumlahUji: 3,
         jamUji: [648, 715, 800],
         hasilUji: null,

@@ -56,10 +56,7 @@
 <script>
 function ujiPerulangan() {
     return {
-        kode: `for (int i = 1; i <= jumlah; i++) {
-    cout << "Jam kedatangan siswa ke-" << i << ": ";
-    cin >> jam;
-}`,
+        kode: ``,
         dataUji: [
             [1, 1, ''],
             [3, 3, ''],
