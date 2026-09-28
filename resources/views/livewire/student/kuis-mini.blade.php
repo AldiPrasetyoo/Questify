@@ -25,7 +25,7 @@
 
     @if($soal)
     {{-- HEADER KUIS --}}
-    <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center justify-between mb-4">
         <span class="text-[10px] font-black text-[#00c2cb] tracking-widest uppercase bg-teal-50 px-3 py-1 rounded-full">
             Tantangan Kuis Mini
         </span>
@@ -34,9 +34,18 @@
         </span>
     </div>
 
+    {{-- INSTRUKSI --}}
+    <div class="mb-5 p-3 sm:p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-start gap-3">
+        <span class="text-lg">📌</span>
+        <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Instruksi Misi</p>
+            <p class="text-xs font-bold text-slate-600">Bacalah soal di bawah ini dengan teliti, lalu pilih satu
+                jawaban yang paling tepat!</p>
+        </div>
+    </div>
+
     {{-- PERTANYAAN --}}
     <p class="font-black text-base sm:text-lg text-slate-800 mb-5 leading-snug">{{ $soal->pertanyaan }}</p>
-
     {{-- PILIHAN JAWABAN (GRID 2 KOLOM) --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         @foreach($soal->pilihan as $huruf => $teks)

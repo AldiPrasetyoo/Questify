@@ -7,9 +7,19 @@
     </div>
     @endif
 
+    {{-- CARI PERTEMUAN TERAKHIR --}}
+    @php
+    $riwayatTerakhir = \App\Models\Rapor::where('user_id', $user->id)
+    ->with('pertemuan')
+    ->latest('updated_at')
+    ->first();
+    $pertemuanTerakhir = $riwayatTerakhir?->pertemuan ?? \App\Models\Pertemuan::where('aktif',
+    true)->orderBy('urutan')->first();
+    @endphp
+
     {{-- HEADER RAPOR --}}
     <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-6 sm:p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 bg-white p-6 sm:p-8 rounded-[2rem] border border-slate-100 shadow-sm">
         <div>
             <span
                 class="text-[10px] font-black text-[#00c2cb] tracking-widest uppercase bg-teal-50 px-3 py-1 rounded-full">
@@ -18,17 +28,25 @@
             <h1 class="text-2xl sm:text-3xl font-black text-slate-800 mt-2">
                 Rapor Peserta Didik — <span class="text-[#00c2cb]">{{ $user->name }}</span>
             </h1>
-            <p class="text-xs font-semibold text-slate-400 mt-1">
+            <p class="text-xs font-semibold text-slate-400 mt-1 mb-4">
                 Laporan capaian kemajuan belajar, poin perolehan, durasi waktu, dan rekomendasi kesiapan post-test.
             </p>
+
+            {{-- TOMBOL LANJUTKAN MISI TERAKHIR --}}
+            @if($pertemuanTerakhir && auth()->user()->role !== 'teacher')
+            <a href="{{ route('pertemuan.show', $pertemuanTerakhir) }}"
+                class="inline-flex items-center gap-2 bg-[#00c2cb] hover:bg-teal-500 text-white text-[11px] font-black px-5 py-2.5 rounded-xl shadow-md shadow-teal-500/20 transition-all">
+                Lanjutkan ke Pertemuan {{ $pertemuanTerakhir->urutan }}
+            </a>
+            @endif
         </div>
 
-        <div class="bg-slate-50 border border-slate-100 px-5 py-3 rounded-2xl flex items-center gap-3 shrink-0">
-            <span class="text-2xl">🏆</span>
+        <div class="bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl flex items-center gap-4 shrink-0">
+            <span class="text-3xl">🏆</span>
             <div>
                 <p class="text-[10px] font-black text-slate-400 uppercase">Akumulasi Poin</p>
-                <p class="text-xl font-black text-[#ff8a00]">{{ $user->total_poin }} <span
-                        class="text-xs text-slate-400 font-bold">Pts</span></p>
+                <p class="text-2xl font-black text-[#ff8a00]">{{ $user->total_poin }} <span
+                        class="text-sm text-slate-400 font-bold">Pts</span></p>
             </div>
         </div>
     </div>
@@ -52,11 +70,11 @@
             <tbody class="divide-y divide-slate-100">
                 @forelse($rapors as $r)
                 <tr class="hover:bg-slate-50/50 transition-colors">
-
                     {{-- SEL JUDUL PERTEMUAN (KLIK UNTUK MODAL) --}}
                     <td class="p-4 font-black text-slate-800">
                         <button type="button"
-                            x-on:click='detailPertemuan = @json(["judul" => $r->pertemuan->judul, "misis" => $r->rincian_waktu_misi]); modalTerbuka = true'
+                            data-info="{{ json_encode(['judul' => $r->pertemuan->judul, 'misis' => $r->rincian_waktu_misi]) }}"
+                            x-on:click="detailPertemuan = JSON.parse($el.dataset.info); modalTerbuka = true"
                             class="border-b-2 border-dashed border-[#00c2cb]/50 cursor-pointer transition-colors hover:text-[#00c2cb] hover:border-[#00c2cb] text-left focus:outline-none">
                             {{ $r->pertemuan->judul }}
                         </button>
@@ -76,7 +94,6 @@
                         {{ $r->nilai_pasca_kelas !== null ? $r->nilai_pasca_kelas.' pts' : '—' }}
                     </td>
 
-                    {{-- KOLOM DURASI WAKTU SINGKAT (Misal: 2.5 menit) --}}
                     <td class="p-4 text-center">
                         @if($r->total_durasi)
                         <span
@@ -213,7 +230,7 @@
     </div>
 
     {{-- =========================================================================
-         MODAL POPUP DETAIL PERTEMUAN (ALPINE.JS)
+         MODAL POPUP DETAIL PERTEMUAN DENGAN ACCORDION (ALPINE.JS)
          ========================================================================= --}}
     <div x-show="modalTerbuka" style="display: none;"
         class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm"
@@ -221,7 +238,7 @@
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
 
-        <div class="bg-slate-50 w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        <div class="bg-slate-50 w-full max-w-2xl rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             @click.away="modalTerbuka = false" x-transition:enter="transition ease-out duration-300 delay-75"
             x-transition:enter-start="opacity-0 translate-y-8 scale-95"
             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -237,8 +254,8 @@
                         📋
                     </div>
                     <div>
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Rincian Performa Misi
-                        </p>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Rincian Performa &
+                            Jawaban</p>
                         <h3 class="text-sm font-extrabold text-slate-800" x-text="detailPertemuan?.judul"></h3>
                     </div>
                 </div>
@@ -259,29 +276,101 @@
 
                         <div class="space-y-3">
                             <template x-for="misi in misis" :key="misi.judul">
-                                {{-- Card Misi --}}
-                                <div
-                                    class="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:border-[#00c2cb]/30 transition-colors">
-                                    <div class="font-extrabold text-slate-700 text-sm flex-1 leading-snug"
-                                        x-text="misi.judul"></div>
+                                {{-- Card Misi dengan state Buka/Tutup --}}
+                                <div x-data="{ bukaJawaban: false }"
+                                    class="bg-white border border-slate-100 rounded-2xl flex flex-col shadow-sm transition-colors overflow-hidden"
+                                    :class="bukaJawaban ? 'border-[#00c2cb]/50 shadow-md' : 'hover:border-[#00c2cb]/30'">
 
-                                    {{-- Statistik Durasi & Poin --}}
-                                    <div
-                                        class="flex items-center gap-4 shrink-0 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
-                                        <div class="flex flex-col items-end w-16">
-                                            <span
-                                                class="text-[9px] text-slate-400 font-black uppercase tracking-wider">Durasi</span>
-                                            <span class="font-mono text-xs font-black text-indigo-600"
-                                                x-text="misi.selesai ? misi.durasi : '—'"></span>
+                                    {{-- Area Header Misi (Klik untuk buka detail) --}}
+                                    <div @click="bukaJawaban = !bukaJawaban"
+                                        class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/50 transition-colors">
+                                        <div class="flex-1">
+                                            <div class="font-extrabold text-slate-700 text-sm leading-snug"
+                                                x-text="misi.judul"></div>
+                                            <div class="text-[10px] font-bold mt-1 flex items-center gap-1"
+                                                :class="bukaJawaban ? 'text-[#00c2cb]' : 'text-slate-400'">
+                                                <span
+                                                    x-text="bukaJawaban ? 'Tutup Detail Jawaban' : 'Lihat Detail Jawaban'"></span>
+                                                <span class="text-[8px]" x-text="bukaJawaban ? '▲' : '▼'"></span>
+                                            </div>
                                         </div>
-                                        <div class="w-px h-6 bg-slate-200"></div>
-                                        <div class="flex flex-col items-start w-12">
-                                            <span
-                                                class="text-[9px] text-slate-400 font-black uppercase tracking-wider">Poin</span>
-                                            <span class="font-mono text-xs font-black"
-                                                :class="misi.selesai ? 'text-[#ff8a00]' : 'text-slate-300'"
-                                                x-text="misi.selesai ? '+' + misi.poin : '0'"></span>
+
+                                        {{-- Statistik Misi Global --}}
+                                        <div
+                                            class="flex items-center gap-4 shrink-0 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
+                                            <div class="flex flex-col items-end w-16">
+                                                <span
+                                                    class="text-[9px] text-slate-400 font-black uppercase tracking-wider">Durasi</span>
+                                                <span class="font-mono text-xs font-black text-indigo-600"
+                                                    x-text="misi.selesai ? misi.durasi : '—'"></span>
+                                            </div>
+                                            <div class="w-px h-6 bg-slate-200"></div>
+                                            <div class="flex flex-col items-start w-12">
+                                                <span
+                                                    class="text-[9px] text-slate-400 font-black uppercase tracking-wider">Poin
+                                                    Total</span>
+                                                <span class="font-mono text-xs font-black"
+                                                    :class="misi.selesai ? 'text-[#ff8a00]' : 'text-slate-300'"
+                                                    x-text="misi.selesai ? '+' + misi.poin : '0'"></span>
+                                            </div>
                                         </div>
+                                    </div>
+
+                                    {{-- Area Detail Jawaban per Konten (terbuka jika diklik) --}}
+                                    <div x-show="bukaJawaban" x-collapse
+                                        class="border-t border-slate-100 bg-slate-50 p-4">
+                                        <template x-if="misi.detail_jawaban && misi.detail_jawaban.length > 0">
+                                            <div class="space-y-3">
+                                                <template x-for="(jawaban, index) in misi.detail_jawaban" :key="index">
+
+                                                    <div class="bg-white border rounded-xl p-3 flex flex-col sm:flex-row gap-4 shadow-sm"
+                                                        :class="jawaban.status === 'selesai' ? 'border-slate-200' : 'border-rose-100 bg-rose-50/30'">
+
+                                                        <div class="flex-1 space-y-2">
+                                                            <div class="flex items-center gap-2">
+                                                                <span x-show="jawaban.status === 'belum'"
+                                                                    class="text-xs">🔒</span>
+                                                                <span
+                                                                    class="text-[9px] font-black uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-1 rounded-md"
+                                                                    x-text="jawaban.tipe"></span>
+                                                            </div>
+                                                            <p class="text-xs font-bold text-slate-700 leading-relaxed"
+                                                                x-text="jawaban.pertanyaan"></p>
+
+                                                            <div class="p-3 rounded-lg border"
+                                                                :class="jawaban.status === 'selesai' ? 'bg-indigo-50/50 border-indigo-50' : 'bg-rose-50/50 border-rose-100'">
+                                                                <span class="text-[9px] font-black uppercase block mb-1"
+                                                                    :class="jawaban.status === 'selesai' ? 'text-indigo-400' : 'text-rose-400'">Respons
+                                                                    / Status:</span>
+                                                                <div class="text-xs font-semibold text-slate-600"
+                                                                    x-html="jawaban.teks_jawaban"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div
+                                                            class="shrink-0 flex items-center sm:items-start sm:flex-col justify-between sm:justify-start gap-1 min-w-[70px] sm:text-right border-t sm:border-t-0 sm:border-l border-slate-100 pt-2 sm:pt-0 sm:pl-4">
+                                                            <span
+                                                                class="text-[9px] font-black uppercase tracking-wider text-slate-400">Skor
+                                                                Diperoleh</span>
+                                                            <span class="text-sm font-black"
+                                                                :class="jawaban.status === 'selesai' ? 'text-[#ff8a00]' : 'text-slate-300'"
+                                                                x-text="'+' + jawaban.poin"></span>
+                                                        </div>
+                                                    </div>
+
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        {{-- Fallback jika misi ternyata belum memiliki isi --}}
+                                        <template x-if="!misi.detail_jawaban || misi.detail_jawaban.length === 0">
+                                            <div class="text-center py-5">
+                                                <span class="text-2xl block mb-2 opacity-40">📂</span>
+                                                <p
+                                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                    Tidak ada konten di dalam misi ini</p>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </template>
@@ -289,11 +378,13 @@
                     </div>
                 </template>
 
-                {{-- Fallback kosong --}}
-                <template x-if="Object.keys(detailPertemuan?.misis || {}).length === 0">
+                {{-- Fallback kosong jika PERTEMUAN sama sekali belum ada aktivitas --}}
+                <template x-if="!detailPertemuan?.misis || Object.keys(detailPertemuan.misis).length === 0">
                     <div class="text-center py-10 bg-white rounded-2xl border border-slate-100">
                         <span class="text-3xl opacity-50 block mb-2">📭</span>
-                        <p class="text-slate-400 text-xs font-bold">Belum ada aktivitas misi di pertemuan ini.</p>
+                        <p class="text-slate-400 text-sm font-black uppercase tracking-wider mt-2">Belum Dikerjakan</p>
+                        <p class="text-xs font-semibold text-slate-400 mt-1">Siswa belum memulai aktivitas apapun pada
+                            pertemuan ini.</p>
                     </div>
                 </template>
             </div>

@@ -1,4 +1,4 @@
-<div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 font-['Nunito']">
+<div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 font-['Nunito'] relative">
     @if($sudahMengerjakan)
     <div class="text-center py-12 space-y-4">
         <div class="text-5xl">⚠️</div>
@@ -47,12 +47,41 @@
             Selanjutnya &rarr;
             </button>
             @else
-            <button wire:click="selesaiUjian" onclick="return confirm('Yakin ingin mengumpulkan jawaban ujian ini?')"
+            {{-- Tombol Pemicu Modal Popup Kustom --}}
+            <button wire:click="konfirmasiKumpulkan"
                 class="px-6 py-2.5 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20">
                 Kumpulkan Ujian 🚀
             </button>
             @endif
     </div>
     @endif
+    @endif
+
+    {{-- MODAL POPUP KONFIRMASI KUMPULKAN UJIAN --}}
+    @if($konfirmasiModal)
+    <div
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+        <div
+            class="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl p-6 sm:p-8 max-w-sm w-full text-center relative">
+            <div
+                class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-inner mb-4">
+                🎯
+            </div>
+            <h3 class="text-lg font-black text-slate-800">Kumpulkan Jawaban Ujian?</h3>
+            <p class="text-xs font-semibold text-slate-400 mt-2 mb-6">Pastikan seluruh soal telah dijawab dengan teliti.
+                Ujian yang telah dikumpulkan tidak dapat diulang kembali.</p>
+
+            <div class="flex gap-2">
+                <button wire:click="tutupModal"
+                    class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black text-xs py-3 rounded-2xl transition-all">
+                    Periksa Lagi
+                </button>
+                <button wire:click="selesaiUjian"
+                    class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs py-3 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all">
+                    Ya, Kumpulkan
+                </button>
+            </div>
+        </div>
+    </div>
     @endif
 </div>

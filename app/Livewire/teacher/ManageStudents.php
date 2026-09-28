@@ -120,7 +120,7 @@ class ManageStudents extends Component
             ->groupBy('user_id')
             ->pluck('last_activity', 'user_id');
 
-        $batasOnline = Carbon::now()->subMinutes(5)->timestamp;
+        $batasOnline = Carbon::now('Asia/Jakarta')->subMinutes(5)->timestamp;
 
         $students = User::where('role', 'student')
             ->when($this->cari, function ($q) {
@@ -137,7 +137,7 @@ class ManageStudents extends Component
             $lastActivity = $sesiTerakhir[$student->id] ?? null;
 
             if ($lastActivity) {
-                $waktuAktivitas = Carbon::createFromTimestamp($lastActivity);
+                $waktuAktivitas = Carbon::createFromTimestamp($lastActivity)->timezone('Asia/Jakarta');
                 $isOnline = $lastActivity >= $batasOnline;
                 $durasi = $isOnline
                     ? 'Aktif saat ini'

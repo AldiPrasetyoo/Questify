@@ -81,6 +81,45 @@
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sm:p-6 relative flex flex-col min-h-[300px]">
 
         <div class="flex-1 space-y-4">
+
+            {{-- INSTRUKSI DINAMIS BERDASARKAN TIPE KONTEN --}}
+            @php
+            $ikonInstruksi = '📌';
+            $teksInstruksi = 'Pelajari dan selesaikan bagian ini untuk melanjutkan perjalanan misimu.';
+
+            switch($kontenAktif->tipe) {
+            case 'teks_web':
+            $ikonInstruksi = '📖';
+            $teksInstruksi = 'Baca dan pahami materi ringkas berikut ini dengan teliti.';
+            break;
+            case 'aset_ppt':
+            $ikonInstruksi = '🖼️';
+            $teksInstruksi = 'Amati slide presentasi atau gambar di bawah ini untuk memperkuat pemahamanmu.';
+            break;
+            case 'koding':
+            $ikonInstruksi = '💻';
+            $teksInstruksi = 'Terapkan logikamu! Kerjakan formulir atau tantangan koding di bawah ini.';
+            break;
+            case 'kuis':
+            $ikonInstruksi = '🎯';
+            $teksInstruksi = 'Waktunya uji pemahaman! Selesaikan kuis mini berikut ini dengan tepat.';
+            break;
+            case 'refleksi':
+            $ikonInstruksi = '🤔';
+            $teksInstruksi = 'Mari merenung sejenak. Tuliskan pendapat, hasil diskusi, atau kesimpulanmu di sini.';
+            break;
+            }
+            @endphp
+            <div class="mb-5 p-3 sm:p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-start gap-3">
+                <span class="text-lg">{{ $ikonInstruksi }}</span>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Petunjuk
+                        Eksplorasi</p>
+                    <p class="text-xs font-bold text-slate-600">{{ $teksInstruksi }}</p>
+                </div>
+            </div>
+
+            {{-- MULAI SWITCH KONTEN --}}
             @switch($kontenAktif->tipe)
 
             @case('teks_web')

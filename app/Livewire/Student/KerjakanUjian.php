@@ -14,6 +14,7 @@ class KerjakanUjian extends Component
     public int $indexSoal = 0;
     public array $jawabanSiswa = [];
     public bool $sudahMengerjakan = false;
+    public bool $konfirmasiModal = false; // State untuk modal popup kustom
 
     public function mount($tipe)
     {
@@ -40,7 +41,7 @@ class KerjakanUjian extends Component
 
     public function selanjutnya()
     {
-        if ($this->indexSoal < count($this->soals) - 1) {
+        if ($this->soals && $this->indexSoal < count($this->soals) - 1) {
             $this->indexSoal++;
         }
     }
@@ -52,8 +53,24 @@ class KerjakanUjian extends Component
         }
     }
 
+    // Membuka modal konfirmasi kustom
+    public function konfirmasiKumpulkan()
+    {
+        $this->konfirmasiModal = true;
+    }
+
+    // Menutup modal konfirmasi kustom
+    public function tutupModal()
+    {
+        $this->konfirmasiModal = false;
+    }
+
     public function selesaiUjian()
     {
+        if (!$this->soals) {
+            return redirect()->route('student.home');
+        }
+
         $skorBenar = 0;
         $totalSoal = count($this->soals);
 
@@ -92,6 +109,6 @@ class KerjakanUjian extends Component
     public function render()
     {
         return view('livewire.student.kerjakan-ujian')
-            ->layout('layouts.clear', ['title' => ucfirst($this->ujian->tipe)]);
+            ->layout('layouts.questify', ['title' => ucfirst($this->ujian->tipe)]);
     }
 }

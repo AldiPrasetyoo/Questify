@@ -4,11 +4,13 @@ namespace App\Livewire\Teacher;
 
 use App\Models\Ujian;
 use App\Models\SoalUjian;
+use App\Models\User;
+use App\Models\HasilUjiPublik;
 use Livewire\Component;
 
 class KelolaUjian extends Component
 {
-    public $tipeAktif = 'pretest'; // Pilihan tab: pretest atau posttest
+    public $tipeAktif = 'pretest'; // Pilihan tab: pretest, posttest, atau ujisoal
     public $pertanyaan, $pilihanA, $pilihanB, $pilihanC, $pilihanD, $pilihanE, $kunciJawaban = 'A';
     public $editSoalId = null;
 
@@ -22,9 +24,21 @@ class KelolaUjian extends Component
 
         $soals = $ujian->soalUjians()->get();
 
+        // Ambil data untuk rekapitulasi preview di bagian bawah
+        $rekapPrePost = User::where('role', 'student')
+            ->with(['progresUjians.ujian'])
+            ->get();
+
+        $rekapUjiSoal = HasilUjiPublik::select('nama', 'kelas', 'ujian_id')
+            ->selectRaw('SUM(is_benar) as total_benar, COUNT(*) as total_soal')
+            ->groupBy('nama', 'kelas', 'ujian_id')
+            ->get();
+
         return view('livewire.teacher.kelola-ujian', [
             'ujian' => $ujian,
             'soals' => $soals,
+            'rekapPrePost' => $rekapPrePost,
+            'rekapUjiSoal' => $rekapUjiSoal,
         ])->layout('layouts.questify', ['title' => 'Kelola Soal ' . ucfirst($this->tipeAktif)]);
     }
 

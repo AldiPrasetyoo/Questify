@@ -1,7 +1,7 @@
-<div class="max-w-3xl mx-auto px-4 py-10 font-['Nunito'] min-h-screen">
+<div class="max-w-3xl mx-auto px-4 py-10 font-['Nunito'] min-h-screen relative">
 
     @if(!$sudahMulai)
-    {{-- HEADER KUIS --}}
+    {{-- FASE 1: HEADER & FORM BIODATA --}}
     <div class="text-center mb-10">
         <div
             class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#00c2cb] to-teal-300 text-white shadow-lg shadow-teal-500/30 mb-4 text-3xl">
@@ -12,7 +12,6 @@
         </p>
     </div>
 
-    {{-- FASE 1: FORM BIODATA --}}
     <div
         class="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-8 sm:p-12 max-w-lg mx-auto animate-fade-in-up">
         <h2 class="text-lg font-black text-slate-800 mb-6 text-center">Lengkapi Data Diri</h2>
@@ -45,10 +44,10 @@
         </form>
     </div>
 
-    @elseif(!$sudahSelesai)
-    {{-- FASE 2: PENGERJAAN SOAL (SATU PER SATU) --}}
-
-    <div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 animate-fade-in">
+    @else
+    {{-- FASE 2: PENGERJAAN SOAL --}}
+    <div
+        class="max-w-2xl mx-auto bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 animate-fade-in {{ $sudahSelesai ? 'opacity-50 pointer-events-none' : '' }}">
         @php $soalAktif = $soals[$indexSoal] ?? null; @endphp
 
         @if($soalAktif)
@@ -71,7 +70,7 @@
             {{ $soalAktif->pertanyaan }}
         </p>
 
-        {{-- Pilihan Ganda (Berbentuk Tombol Interaktif) --}}
+        {{-- Pilihan Ganda --}}
         <div class="space-y-3 mb-8">
             @foreach($soalAktif->pilihan ?? [] as $huruf => $teks)
             @php $hurufUpper = strtoupper($huruf); @endphp
@@ -87,7 +86,6 @@
             @endforeach
         </div>
 
-        {{-- Menampilkan Error jika tombol submit ditekan tapi soal belum dijawab --}}
         @error('jawaban.'.$soalAktif->id)
         <div
             class="mb-6 p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold flex items-center gap-2">
@@ -107,8 +105,8 @@
                 Selanjutnya &rarr;
                 </button>
                 @else
-                <button wire:click="kumpulkan"
-                    onclick="return confirm('Sudah yakin dengan semua jawabanmu? Pastikan tidak ada soal yang terlewat.')"
+                {{-- Tombol Pemicu Modal Konfirmasi Kustom --}}
+                <button wire:click="konfirmasiKumpulkan"
                     class="px-6 py-3 rounded-xl text-xs font-black bg-[#ff8a00] hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2">
                     Kumpulkan Jawaban 🚀
                 </button>
@@ -122,46 +120,58 @@
         @endif
     </div>
 
-    @else
-    {{-- FASE 3: KARTU HASIL SKOR --}}
+    {{-- MODAL POPUP KONFIRMASI KUMPULKAN --}}
+    @if($konfirmasiModal)
     <div
-        class="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-8 sm:p-12 text-center animate-fade-in-up max-w-lg mx-auto relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-48 h-48 bg-[#00c2cb]/10 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-[#ff8a00]/10 rounded-full blur-3xl"></div>
-
-        <div class="relative z-10">
-            <h2 class="text-lg font-black text-slate-500 uppercase tracking-widest mb-2">Hasil Ujian</h2>
-
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+        <div
+            class="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl p-8 max-w-sm w-full text-center relative overflow-hidden animate-fade-in-up">
             <div
-                class="w-40 h-40 mx-auto rounded-full border-8 {{ $skorAkhir >= 70 ? 'border-[#00c2cb] text-[#00c2cb]' : 'border-amber-400 text-amber-500' }} flex items-center justify-center mb-6 shadow-inner relative bg-white">
-                <span class="text-5xl font-black">{{ $skorAkhir }}</span>
-                <span
-                    class="absolute -bottom-3 bg-white px-3 py-1 rounded-full text-[10px] font-black tracking-widest border border-slate-100 text-slate-400 shadow-sm">SKOR</span>
+                class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-inner mb-4">
+                🎯
             </div>
 
-            <h3 class="text-xl font-black text-slate-800 mb-1">
-                {{ $skorAkhir >= 70 ? 'Luar Biasa, '.$namaSiswa.'! 🎉' : 'Tetap Semangat, '.$namaSiswa.'! 💪' }}
-            </h3>
-            <p class="text-xs font-semibold text-slate-400 mb-6">Kelas: {{ $kelasSiswa }}</p>
-
-            <p
-                class="text-sm font-semibold text-slate-500 mb-8 bg-slate-50 py-3 px-4 rounded-xl inline-block border border-slate-100">
-                Menjawab <strong class="text-slate-700">{{ $jumlahBenar }}</strong> dari <strong
-                    class="text-slate-700">{{ count($soals) }}</strong> pertanyaan dengan benar.
+            <h3 class="text-lg font-black text-slate-800 mb-2">Kumpulkan Jawaban?</h3>
+            <p class="text-xs font-semibold text-slate-400 mb-6 leading-relaxed">
+                Pastikan seluruh soal telah dijawab dengan teliti. Ujian yang telah dikumpulkan tidak dapat diulang
+                kembali.
             </p>
 
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <button wire:click="ulangiKuis"
-                    class="px-6 py-3 rounded-xl text-xs font-black bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors">
-                    Ulangi Kuis 🔄
+            <div class="flex gap-3">
+                <button wire:click="tutupModal"
+                    class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black text-xs py-3.5 rounded-xl transition-all">
+                    Periksa Lagi
                 </button>
-                <a href="/"
-                    class="px-6 py-3 rounded-xl text-xs font-black bg-[#00c2cb] hover:bg-teal-500 text-white shadow-md transition-colors inline-block">
-                    Kembali ke Beranda
-                </a>
+                <button wire:click="kumpulkan"
+                    class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all">
+                    Ya, Kumpulkan
+                </button>
             </div>
         </div>
     </div>
+    @endif
+
+    {{-- FASE 3: MODAL POPUP SELESAI & UCAPAN TERIMA KASIH --}}
+    @if($sudahSelesai)
+    <div
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+        <div
+            class="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl p-8 max-w-sm w-full text-center relative overflow-hidden animate-fade-in-up">
+            <div
+                class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 shadow-inner">
+                🙏
+            </div>
+
+            <h3 class="text-xl font-black text-slate-800 mb-2">Terima Kasih!</h3>
+
+            <p class="text-xs font-semibold text-slate-500 mb-8 leading-relaxed">
+                Jawabanmu telah berhasil dikirim.
+                <br>Terima kasih atas partisipasinya dalam uji coba kemampuan ini.
+            </p>
+        </div>
+    </div>
+    @endif
+
     @endif
 
 </div>

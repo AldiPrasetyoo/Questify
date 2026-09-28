@@ -30,6 +30,7 @@ use App\Livewire\Student\KerjakanUjian;
 // CONTROLLER
 // ======================================================
 use App\Http\Controllers\teacher\downloadData;
+use App\Http\Controllers\Teacher\downloadUjiSoal;
 use App\Livewire\Teacher\ManageStudents;
 
 // ======================================================
@@ -205,9 +206,14 @@ Route::middleware([
     // ==================================================
 
     Route::get(
-        '/teacher/export-rekap',
+        '/teacher/downloadPrePosttest',
         [downloadData::class, 'downloadExcel']
     )->name('teacher.export');
+
+    Route::get(
+        '/teacher/downloadUjiSoal',
+        [downloadUjiSoal::class, 'downloadExcel']
+    )->name('teacher.download.uji-publik');
 });
 
 

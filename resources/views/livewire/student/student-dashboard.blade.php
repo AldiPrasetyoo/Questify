@@ -5,61 +5,50 @@
         HERO / PLAYER HEADER
     ============================================================= --}}
         <div
-            class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-cyan-500 via-teal-500 to-cyan-600 p-8 text-white shadow-xl">
+            class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-cyan-500 via-teal-500 to-cyan-600 p-8 sm:p-10 text-white shadow-xl">
 
-            {{-- Decorative --}}
+            {{-- Decorative Blur --}}
+            <div
+                class="absolute right-[-5%] top-[-10%] w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none">
+            </div>
+            <div
+                class="absolute bottom-[-10%] left-[15%] w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none">
+            </div>
 
-            <div class="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div class="relative z-10 flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
 
-                {{-- KIRI --}}
+                {{-- KIRI: GREETING & KELOMPOK --}}
                 <div class="flex-1">
 
                     <div class="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-white/70">
-                        Questify Competition
+                        Questify Learning
                     </div>
 
-                    <h1 class="text-4xl font-black tracking-tight">
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight">
                         Halo, {{ $user->name }}! 👋
                     </h1>
 
-                    <p class="mt-3 max-w-xl text-base font-medium leading-relaxed text-white/80">
-                        Kumpulkan skor dari setiap aktivitas pembelajaran
-                        dan naikkan posisimu di papan peringkat.
+                    <p class="mt-4 max-w-xl text-base sm:text-lg font-medium leading-relaxed text-white/90">
+                        Kumpulkan skor dari setiap aktivitas pembelajaran dan naikkan posisimu di papan peringkat kelas.
                     </p>
 
-                    <div class="mt-6 flex flex-wrap gap-3">
+                    <div class="mt-8 flex flex-wrap gap-4">
 
-                        {{-- SCORE --}}
-                        <div class="rounded-2xl bg-white/15 px-5 py-3 backdrop-blur">
-                            <div class="text-[10px] font-bold uppercase tracking-wider text-white/60">
-                                Skor Kamu
-                            </div>
-
-                            <div class="mt-1 text-xl font-black">
-                                {{ number_format($skorSekarang) }}
-                                <span class="text-sm font-bold text-white/60">Poin</span>
-                            </div>
-                        </div>
-
-                        {{-- RANK --}}
-                        <div class="rounded-2xl bg-white/15 px-5 py-3 backdrop-blur">
-                            <div class="text-[10px] font-bold uppercase tracking-wider text-white/60">
-                                Peringkat
-                            </div>
-
-                            <div class="mt-1 text-xl font-black">
-                                #{{ $peringkat ?? '-' }}
-                            </div>
-                        </div>
-
-                        {{-- Kelompok --}}
-                        <div class="rounded-2xl bg-white/15 px-5 py-3 backdrop-blur">
-                            <div class="text-[10px] font-bold uppercase tracking-wider text-white/60">
-                                Kelompok
-                            </div>
-
-                            <div class="mt-1 text-xl font-black">
-                                {{ $kelompokSaya->nama_kelompok ?? '-' }}
+                        {{-- Kelompok Badge --}}
+                        <div class="rounded-2xl bg-white/15 px-6 py-4 backdrop-blur-sm border border-white/20">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl shrink-0">
+                                    👥
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-black uppercase tracking-wider text-white/70">
+                                        Kelompok Saat Ini
+                                    </div>
+                                    <div class="mt-0.5 text-lg sm:text-xl font-black text-white">
+                                        {{ $kelompokSaya->nama_kelompok ?? 'Belum Ada Kelompok' }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -69,7 +58,7 @@
 
 
                 {{-- KANAN : COMPETITIVE CARD --}}
-                <div class="w-full max-w-sm rounded-[26px] bg-white p-4 text-slate-800 shadow-2xl">
+                <div class="w-full max-w-sm rounded-[26px] bg-white p-5 text-slate-800 shadow-2xl shrink-0">
 
                     <div class="flex items-center justify-between">
 
@@ -108,11 +97,12 @@
                     {{-- TARGET ATAS --}}
                     @if($siswaDiAtas)
 
-                    <div class="mt-5 rounded-2xl bg-cyan-50 p-4">
+                    <div class="mt-5 rounded-2xl bg-cyan-50 p-4 border border-cyan-100/50">
 
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-3">
 
-                            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-100 text-lg">
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-100 text-lg">
                                 🎯
                             </div>
 
@@ -122,7 +112,7 @@
                                     Target Berikutnya
                                 </div>
 
-                                <div class="mt-0.5 font-black text-slate-800">
+                                <div class="mt-0.5 font-black text-slate-800 truncate max-w-[120px] sm:max-w-[150px]">
                                     {{ $siswaDiAtas->name }}
                                 </div>
 
@@ -135,14 +125,14 @@
                                 </div>
 
                                 <div class="text-[10px] font-bold text-slate-400">
-                                    {{ number_format($siswaDiAtas->xp) }} Poin
+                                    {{ number_format($siswaDiAtas->xp ?? 0) }} Poin
                                 </div>
 
                             </div>
 
                         </div>
 
-                        <div class="mt-3 text-xs font-bold text-slate-500">
+                        <div class="mt-3 text-xs font-bold text-slate-500 bg-white/60 p-2 rounded-xl text-center">
                             Butuh
                             <span class="font-black text-cyan-600">
                                 {{ number_format($selisihAtas) }} Poin
@@ -155,7 +145,7 @@
                     @else
 
                     {{-- RANK 1 --}}
-                    <div class="mt-5 rounded-2xl bg-amber-50 p-4">
+                    <div class="mt-5 rounded-2xl bg-amber-50 border border-amber-100/50 p-4">
 
                         <div class="flex items-center gap-3">
 
@@ -164,12 +154,12 @@
                             </div>
 
                             <div>
-                                <div class="text-xs font-black uppercase text-amber-600">
+                                <div class="text-xs font-black uppercase tracking-wider text-amber-600">
                                     Kamu berada di puncak!
                                 </div>
 
-                                <div class="mt-1 text-sm font-bold text-slate-600">
-                                    Pertahankan posisi #1.
+                                <div class="mt-1 text-xs font-bold text-slate-600">
+                                    Pertahankan posisi #1 dan terus kumpulkan poin.
                                 </div>
                             </div>
 
@@ -183,28 +173,30 @@
                     {{-- POSISI BAWAH --}}
                     @if($siswaDiBawah)
 
-                    <div class="mt-4 flex items-center justify-between text-xs">
+                    <div class="mt-5 pt-4 border-t border-slate-100">
+                        <div class="flex items-center justify-between text-xs">
 
-                        <span class="font-semibold text-slate-400">
-                            Posisi di bawahmu
-                        </span>
+                            <span class="font-semibold text-slate-400">
+                                Posisi di bawahmu
+                            </span>
 
-                        <span class="font-black text-slate-700">
-                            #{{ $peringkat + 1 }}
-                        </span>
+                            <span class="font-black text-slate-700">
+                                #{{ $peringkat + 1 }}
+                            </span>
 
-                    </div>
+                        </div>
 
-                    <div class="mt-1 flex items-center justify-between">
+                        <div class="mt-1 flex items-center justify-between">
 
-                        <span class="text-sm font-bold text-slate-600">
-                            {{ $siswaDiBawah->name }}
-                        </span>
+                            <span class="text-sm font-bold text-slate-600 truncate max-w-[150px]">
+                                {{ $siswaDiBawah->name }}
+                            </span>
 
-                        <span class="text-xs font-bold text-emerald-500">
-                            - {{ number_format($selisihBawah) }} Poin
-                        </span>
+                            <span class="text-[11px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                - {{ number_format($selisihBawah) }} Poin
+                            </span>
 
+                        </div>
                     </div>
 
                     @endif
@@ -237,9 +229,7 @@
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 
                 {{-- PERTEMUAN --}}
-                <a href="{{ $sudahPretest && $pertemuans->first()
-            ? route('pertemuan.show', $pertemuans->first())
-            : '#' }}"
+                <a href="{{ $sudahPretest && $pertemuans->first() ? route('pertemuan.show', $pertemuans->first()) : '#' }}"
                     class="group rounded-3xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
 
                     <div class="flex items-center justify-between">
@@ -261,7 +251,7 @@
                 </a>
 
 
-                {{-- PERINGKAT --}}
+                {{-- PAPAN PERINGKAT --}}
                 <a href="{{ route('leaderboard') }}"
                     class="group rounded-3xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
 
@@ -282,7 +272,7 @@
                     </h3>
 
                     <p class="mt-1 text-sm text-slate-400">
-                        Lihat posisi dan skor siswa
+                        Lihat posisi dan skor kelas
                     </p>
 
                 </a>
@@ -318,7 +308,7 @@
         {{-- ============================================================
         LEARNING PROGRESS
     ============================================================= --}}
-        <section class="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-7">
+        <section class="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-7 mt-4">
 
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
@@ -498,7 +488,7 @@
     ============================================================= --}}
         @if(!$sudahPretest)
 
-        <section class="relative overflow-hidden rounded-[2rem] bg-white border border-cyan-100 shadow-sm">
+        <section class="relative overflow-hidden rounded-[2rem] bg-white border border-cyan-100 shadow-sm mt-4">
 
             <div class="absolute right-0 top-0 w-72 h-72 bg-cyan-50 rounded-full -translate-y-1/2 translate-x-1/3">
             </div>
@@ -528,7 +518,7 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
 
-                            <div class="bg-gray-50 rounded-2xl p-4">
+                            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                                 <span class="text-xl">📝</span>
                                 <p class="text-[9px] font-black uppercase text-gray-400 mt-2">
                                     Challenge
@@ -538,7 +528,7 @@
                                 </p>
                             </div>
 
-                            <div class="bg-gray-50 rounded-2xl p-4">
+                            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                                 <span class="text-xl">🔓</span>
                                 <p class="text-[9px] font-black uppercase text-gray-400 mt-2">
                                     Unlock
@@ -548,7 +538,7 @@
                                 </p>
                             </div>
 
-                            <div class="bg-gray-50 rounded-2xl p-4">
+                            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                                 <span class="text-xl">🚀</span>
                                 <p class="text-[9px] font-black uppercase text-gray-400 mt-2">
                                     Reward
@@ -569,9 +559,7 @@
 
                         <a href="{{ route('ujian.kerjakan', 'pretest') }}"
                             class="group flex items-center justify-center gap-3 w-full bg-[#00aeb8] hover:bg-[#008f98] text-white font-black text-sm py-4 px-6 rounded-2xl shadow-lg shadow-cyan-200 hover:-translate-y-1 transition-all">
-
                             <span>Mulai Pre-Test</span>
-
                         </a>
 
                         <p class="text-center text-[9px] font-bold text-gray-400 mt-3">
@@ -604,7 +592,7 @@
 
 
         {{-- LOCKED --}}
-        <section class="bg-gray-50 border border-dashed border-gray-200 rounded-[2rem] p-8 text-center">
+        <section class="bg-gray-50 border border-dashed border-gray-200 rounded-[2rem] p-8 text-center mt-4">
 
             <div
                 class="w-16 h-16 mx-auto rounded-3xl bg-white border border-gray-100 flex items-center justify-center text-xl shadow-sm">
@@ -630,7 +618,7 @@
             UNLOCKED BANNER
         ========================================================= --}}
         <section
-            class="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg shadow-emerald-100">
+            class="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg shadow-emerald-100 mt-4">
 
             <div class="absolute right-[-30px] top-[-70px] w-52 h-52 rounded-full bg-white/10"></div>
 
@@ -657,7 +645,7 @@
 
                         </div>
 
-                        <p class="text-xs text-white/75 font-semibold mt-1">
+                        <p class="text-xs text-white/90 font-semibold mt-1">
                             Pre-Test selesai. Sekarang waktunya menaklukkan semua misi pembelajaran! 🚀
                         </p>
 
@@ -667,7 +655,7 @@
 
                 <div class="shrink-0 text-right">
 
-                    <p class="text-[8px] uppercase font-black text-white/50">
+                    <p class="text-[8px] uppercase font-black text-white/70">
                         Status
                     </p>
 
@@ -685,7 +673,7 @@
         {{-- ========================================================
             MISSIONS
         ========================================================= --}}
-        <section>
+        <section class="mt-8">
 
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
 
@@ -828,7 +816,7 @@
             POST TEST
         ========================================================= --}}
         <section
-            class="relative overflow-hidden rounded-[2rem] border {{ $syaratPosttest ? 'bg-gradient-to-br from-indigo-500 to-violet-600 border-indigo-200 shadow-lg shadow-indigo-100' : 'bg-white border-gray-100 shadow-sm' }}">
+            class="relative overflow-hidden rounded-[2rem] border mt-8 {{ $syaratPosttest ? 'bg-gradient-to-br from-indigo-500 to-violet-600 border-indigo-200 shadow-lg shadow-indigo-100' : 'bg-white border-gray-100 shadow-sm' }}">
 
             <div
                 class="absolute right-[-50px] top-[-80px] w-64 h-64 rounded-full {{ $syaratPosttest ? 'bg-white/10' : 'bg-gray-50' }}">
@@ -857,7 +845,7 @@
                         <div>
 
                             <p
-                                class="text-[9px] uppercase tracking-wider font-black {{ $syaratPosttest ? 'text-white/50' : 'text-gray-400' }}">
+                                class="text-[9px] uppercase tracking-wider font-black {{ $syaratPosttest ? 'text-white/70' : 'text-gray-400' }}">
                                 Final Challenge
                             </p>
 
@@ -877,7 +865,7 @@
                                 @elseif($syaratPosttest)
 
                                 <span
-                                    class="text-[8px] font-black uppercase bg-white/15 text-white px-2.5 py-1 rounded-full">
+                                    class="text-[8px] font-black uppercase bg-white/20 text-white px-2.5 py-1 rounded-full">
                                     Terbuka
                                 </span>
 
@@ -894,7 +882,7 @@
 
 
                             <p
-                                class="text-xs font-semibold mt-2 leading-relaxed {{ $syaratPosttest ? 'text-white/75' : 'text-gray-400' }}">
+                                class="text-xs font-semibold mt-2 leading-relaxed {{ $syaratPosttest ? 'text-white/90' : 'text-gray-400' }}">
 
                                 @if($sudahPosttest)
 
@@ -959,14 +947,14 @@
         {{-- ============================================================
         FOOTER TIP
     ============================================================= --}}
-        <div class="text-center py-3">
+        <div class="text-center py-5 mt-4">
 
-            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-300">
+            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">
                 Questify Learning Platform
             </p>
 
-            <p class="text-[10px] text-gray-400 font-semibold mt-1">
-                Belajar • Selesaikan Misi • Raih Achievement 🚀
+            <p class="text-[10px] text-gray-500 font-semibold mt-1">
+                Belajar • Berdiskusi • Berkembang 🚀
             </p>
 
         </div>

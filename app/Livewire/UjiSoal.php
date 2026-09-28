@@ -17,11 +17,16 @@ class UjiSoal extends Component
 
     public $sudahMulai = false;
     public $sudahSelesai = false;
-    public $skorAkhir = 0;
-    public $jumlahBenar = 0;
+    public $konfirmasiModal = false; // State untuk modal konfirmasi kumpul
 
     public function mount()
     {
+        if (session()->has('sudah_mengerjakan_uji_soal')) {
+            $this->sudahMulai = true;
+            $this->sudahSelesai = true;
+            return;
+        }
+
         $ujian = Ujian::where('tipe', 'ujisoal')->first();
 
         if ($ujian) {
@@ -64,9 +69,10 @@ class UjiSoal extends Component
         }
     }
 
-    public function kumpulkan()
+    // Membuka modal popup konfirmasi sebelum kumpul
+    public function konfirmasiKumpulkan()
     {
-        // 1. Validasi: Pastikan semua soal dijawab
+        // Validasi opsional: Pastikan semua soal diisi sebelum modal muncul
         $rules = [];
         $messages = [];
         foreach ($this->soals as $s) {
@@ -75,18 +81,23 @@ class UjiSoal extends Component
         }
         $this->validate($rules, $messages);
 
-        // 2. Evaluasi dan simpan per baris soal ke tabel hasil_uji_publiks
-        $benar = 0;
+        $this->konfirmasiModal = true;
+    }
 
+    public function tutupModal()
+    {
+        $this->konfirmasiModal = false;
+    }
+
+    public function kumpulkan()
+    {
+        $this->konfirmasiModal = false;
+
+        // Simpan jawaban ke database
         foreach ($this->soals as $soal) {
             $pilihanSiswa = $this->jawaban[$soal->id] ?? '';
             $isBenar = ($pilihanSiswa === $soal->kunci_jawaban) ? 1 : 0;
 
-            if ($isBenar === 1) {
-                $benar++;
-            }
-
-            // Menyimpan baris demi baris menyerupai format tabel jawaban_ujians + nama & kelas
             HasilUjiPublik::create([
                 'nama'            => $this->namaSiswa,
                 'kelas'           => $this->kelasSiswa,
@@ -97,17 +108,10 @@ class UjiSoal extends Component
             ]);
         }
 
-        // 3. Kalkulasi Skor Akhir untuk ditampilkan di kartu hasil layar
-        $totalSoal = count($this->soals);
-        $this->jumlahBenar = $benar;
-        $this->skorAkhir = $totalSoal > 0 ? round(($benar / $totalSoal) * 100) : 0;
+        // Kunci sesi ujian
+        session(['sudah_mengerjakan_uji_soal' => true]);
 
         $this->sudahSelesai = true;
-    }
-
-    public function ulangiKuis()
-    {
-        $this->reset(['jawaban', 'indexSoal', 'sudahMulai', 'sudahSelesai', 'skorAkhir', 'jumlahBenar', 'namaSiswa', 'kelasSiswa']);
     }
 
     public function render()

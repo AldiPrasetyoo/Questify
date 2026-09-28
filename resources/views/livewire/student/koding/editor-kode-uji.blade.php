@@ -1,8 +1,6 @@
 <div x-data="ujiTabelKebenaran()">
     <p class="text-sm font-semibold text-gray-600 mb-1">Tulis program penentu status kehadiran, lalu jalankan terhadap
         tabel uji.</p>
-    <p class="text-xs font-semibold text-gray-400 mb-3">Kode dijalankan sungguhan lewat JSCPP (C++ interpreter) langsung
-        di browsermu.</p>
 
     <textarea x-model="kode" rows="8"
         class="w-full font-mono text-sm rounded-2xl border-gray-200 bg-slate-900 text-emerald-300 p-4"></textarea>
@@ -52,77 +50,77 @@
 </div>
 
 <script>
-function ujiTabelKebenaran() {
-    return {
-        kode: ``,
-        dataUji: [
-            [648, 'Hadir', ''],
-            [700, 'Hadir', 'Jam batas'],
-            [701, 'Terlambat', 'Jam batas'],
-            [715, 'Terlambat', ''],
-            [730, 'Terlambat', 'Jam batas'],
-            [731, 'Alpa', 'Jam batas'],
-            [800, 'Alpa', '']
-        ],
-        hasilUji: [],
-        errorTerakhir: null,
-        sudahDijalankan: false,
-        sedangJalan: false,
+    function ujiTabelKebenaran() {
+        return {
+            kode: ``,
+            dataUji: [
+                [648, 'Hadir', ''],
+                [700, 'Hadir', 'Jam batas'],
+                [701, 'Terlambat', 'Jam batas'],
+                [715, 'Terlambat', ''],
+                [730, 'Terlambat', 'Jam batas'],
+                [731, 'Alpa', 'Jam batas'],
+                [800, 'Alpa', '']
+            ],
+            hasilUji: [],
+            errorTerakhir: null,
+            sudahDijalankan: false,
+            sedangJalan: false,
 
-        async jalankanUji() {
-            this.sedangJalan = true;
-            this.hasilUji = [];
-            this.errorTerakhir = null;
+            async jalankanUji() {
+                this.sedangJalan = true;
+                this.hasilUji = [];
+                this.errorTerakhir = null;
 
-            try {
-                await new Promise(r => setTimeout(r, 10)); // biar UI sempat render 'sedang menjalankan'
+                try {
+                    await new Promise(r => setTimeout(r, 10)); // biar UI sempat render 'sedang menjalankan'
 
-                for (const [jam, seharusnya, catatan] of this.dataUji) {
-                    if (typeof window.bungkusKode !== 'function' || typeof window.jalankanKodeCpp !== 'function') {
-                        throw new Error(
-                            "Sistem gagal memuat eksekutor C++ (bungkusKode / jalankanKodeCpp tidak ditemukan)."
-                        );
+                    for (const [jam, seharusnya, catatan] of this.dataUji) {
+                        if (typeof window.bungkusKode !== 'function' || typeof window.jalankanKodeCpp !== 'function') {
+                            throw new Error(
+                                "Sistem gagal memuat eksekutor C++ (bungkusKode / jalankanKodeCpp tidak ditemukan)."
+                            );
+                        }
+
+                        const program = window.bungkusKode(this.kode, {
+                            jam
+                        });
+                        const hasil = window.jalankanKodeCpp(program, []);
+
+                        if (hasil.error) {
+                            this.errorTerakhir = hasil.error;
+                            this.hasilUji = [];
+                            this.sudahDijalankan = true;
+                            return; // Langsung lari ke blok finally
+                        }
+
+                        this.hasilUji.push({
+                            jam,
+                            seharusnya,
+                            catatan,
+                            keluaran: hasil.keluaran,
+                            lolos: hasil.keluaran.trim() === seharusnya
+                        });
                     }
-
-                    const program = window.bungkusKode(this.kode, {
-                        jam
-                    });
-                    const hasil = window.jalankanKodeCpp(program, []);
-
-                    if (hasil.error) {
-                        this.errorTerakhir = hasil.error;
-                        this.hasilUji = [];
-                        this.sudahDijalankan = true;
-                        return; // Langsung lari ke blok finally
-                    }
-
-                    this.hasilUji.push({
-                        jam,
-                        seharusnya,
-                        catatan,
-                        keluaran: hasil.keluaran,
-                        lolos: hasil.keluaran.trim() === seharusnya
-                    });
+                    this.sudahDijalankan = true;
+                } catch (err) {
+                    this.errorTerakhir = err.message || err;
+                } finally {
+                    this.sedangJalan = false;
                 }
-                this.sudahDijalankan = true;
-            } catch (err) {
-                this.errorTerakhir = err.message || err;
-            } finally {
-                this.sedangJalan = false;
+            },
+
+            get jumlahLolos() {
+                return this.hasilUji.filter(h => h.lolos).length;
+            },
+            get semuaJamBatasLolos() {
+                return this.hasilUji.filter(h => h.catatan === 'Jam batas').every(h => h.lolos);
+            },
+
+            kirim() {
+                const poin = Math.min(this.jumlahLolos * 5, 35);
+                this.$wire.terimaHasil(this.jumlahLolos, this.kode, poin);
             }
-        },
-
-        get jumlahLolos() {
-            return this.hasilUji.filter(h => h.lolos).length;
-        },
-        get semuaJamBatasLolos() {
-            return this.hasilUji.filter(h => h.catatan === 'Jam batas').every(h => h.lolos);
-        },
-
-        kirim() {
-            const poin = Math.min(this.jumlahLolos * 5, 35);
-            this.$wire.terimaHasil(this.jumlahLolos, this.kode, poin);
-        }
-    };
-}
+        };
+    }
 </script>

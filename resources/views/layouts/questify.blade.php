@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Questify' }}</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,9 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-    body {
-        font-family: 'Nunito', sans-serif;
-    }
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
     </style>
 
     <!-- Quill Editor -->
@@ -180,44 +182,44 @@
 ====================================================== -->
 
     <script>
-    function toggleDropdown() {
-        const dropdown = document.getElementById('profileDropdown');
-        const arrow = document.getElementById('profileArrow');
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            const arrow = document.getElementById('profileArrow');
 
-        if (!dropdown) {
-            return;
-        }
+            if (!dropdown) {
+                return;
+            }
 
-        dropdown.classList.toggle('hidden');
-
-        if (arrow) {
-            arrow.classList.toggle('rotate-180');
-        }
-    }
-
-    // ================================================
-    // CLOSE DROPDOWN WHEN CLICKING OUTSIDE
-    // ================================================
-    window.addEventListener('click', function(e) {
-        const button = document.getElementById('profileButton');
-        const dropdown = document.getElementById('profileDropdown');
-        const arrow = document.getElementById('profileArrow');
-
-        if (!button || !dropdown) {
-            return;
-        }
-
-        if (
-            !button.contains(e.target) &&
-            !dropdown.contains(e.target)
-        ) {
-            dropdown.classList.add('hidden');
+            dropdown.classList.toggle('hidden');
 
             if (arrow) {
-                arrow.classList.remove('rotate-180');
+                arrow.classList.toggle('rotate-180');
             }
         }
-    });
+
+        // ================================================
+        // CLOSE DROPDOWN WHEN CLICKING OUTSIDE
+        // ================================================
+        window.addEventListener('click', function(e) {
+            const button = document.getElementById('profileButton');
+            const dropdown = document.getElementById('profileDropdown');
+            const arrow = document.getElementById('profileArrow');
+
+            if (!button || !dropdown) {
+                return;
+            }
+
+            if (
+                !button.contains(e.target) &&
+                !dropdown.contains(e.target)
+            ) {
+                dropdown.classList.add('hidden');
+
+                if (arrow) {
+                    arrow.classList.remove('rotate-180');
+                }
+            }
+        });
     </script>
 
     @livewireScripts

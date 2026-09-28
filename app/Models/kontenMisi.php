@@ -32,4 +32,9 @@ class kontenMisi extends Model
     {
         return $this->hasMany(KuisSoal::class)->orderBy('urutan');
     }
+
+    public function progresKontens()
+    {
+        return $this->hasMany(ProgresKonten::class);
+    }
 }

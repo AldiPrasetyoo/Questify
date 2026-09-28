@@ -1,8 +1,6 @@
 <div x-data="simulasiKehadiran()">
     <p class="text-sm font-semibold text-gray-600 mb-1">Tulis program rekap kehadiran lengkap, lalu uji terhadap 4 data.
         Rekap dan persentase dicek terpisah.</p>
-    <p class="text-xs font-semibold text-gray-400 mb-3">Dijalankan sungguhan lewat JSCPP — cin akan membaca nilai jam
-        sesuai data uji, berurutan.</p>
 
     <textarea x-model="kode" rows="18"
         class="w-full font-mono text-sm rounded-2xl border-gray-200 bg-slate-900 text-emerald-300 p-4"></textarea>

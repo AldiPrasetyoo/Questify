@@ -5,31 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selamat Datang - Questify</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Font Nunito -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
-    body {
-        font-family: 'Nunito', sans-serif;
-    }
-
-    .float-anim {
-        animation: float 4s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0% {
-            transform: translateY(0px);
+        body {
+            font-family: 'Nunito', sans-serif;
         }
 
-        50% {
-            transform: translateY(-12px);
+        .float-anim {
+            animation: float 4s ease-in-out infinite;
         }
 
-        100% {
-            transform: translateY(0px);
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
         }
-    }
     </style>
 </head>
 

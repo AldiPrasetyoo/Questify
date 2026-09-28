@@ -11,6 +11,25 @@
             tatap muka.</p>
     </div>
 
+    {{-- FILTER & PENCARIAN --}}
+    <div
+        class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="w-full sm:w-72">
+            <input type="text" wire:model.live.debounce.300ms="cari" placeholder="Cari nama siswa..."
+                class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#00c2cb]">
+        </div>
+        <div class="w-full sm:w-auto flex items-center gap-2">
+            <span class="text-xs font-black text-slate-400 uppercase">Urutkan Berdasarkan:</span>
+            <select wire:model.live="sortOrder"
+                class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#00c2cb]">
+                <option value="name_asc">Nama (A - Z)</option>
+                <option value="name_desc">Nama (Z - A)</option>
+                <option value="poin_desc">Poin Tertinggi</option>
+                <option value="poin_asc">Poin Terendah</option>
+            </select>
+        </div>
+    </div>
+
     {{-- Tabel Progres Pra-Kelas --}}
     <div>
         <h2 class="font-extrabold text-slate-700 mb-3 text-base">Progres Pra-Kelas</h2>
@@ -47,7 +66,8 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="p-6 text-center text-slate-400 font-bold">Belum ada siswa terdaftar.</td>
+                        <td colspan="4" class="p-6 text-center text-slate-400 font-bold">Tidak ada siswa yang cocok
+                            dengan pencarian.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -102,7 +122,7 @@
             @empty
             <div class="col-span-full bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center">
                 <span class="text-3xl block mb-2">📝</span>
-                <p class="text-slate-400 text-sm font-bold">Belum ada jawaban refleksi masuk untuk pertemuan ini.</p>
+                <p class="text-slate-400 text-sm font-bold">Belum ada jawaban refleksi yang cocok.</p>
             </div>
             @endforelse
         </div>
